@@ -1,0 +1,67 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Buho Radio</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/tleunen/react-mdl/master/extra/material.min.css">
+    <link rel="stylesheet" href="https://cdn.rawgit.com/isagalaev/highlight.js/master/src/styles/default.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  </head>
+  <body>
+    <div id="main" class="mdl-layout">
+      <div id="container" class="mdl-layout__inner-container"></div>
+      <div id="footer"></div>
+    </div>
+    <script src="https://cdn.rawgit.com/tleunen/react-mdl/master/extra/material.min.js"></script>
+    <script src="http://flows.liquidsoap.fm/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript">
+      var radio_token = "cb8f350e3e2800b4e9f12d0eb62342b7d31e8518";
+      var socket = io.connect("http://flows.liquidsoap.fm");
+
+      socket.emit('join', radio_token);
+
+      socket.on('joined', function (radio) {
+        console.log("Successfully joined " + radio.name + " notification channel. Current title is: " + radio.title + ".");
+        $('#radioTitle').html(radio.title);
+      });
+
+      socket.on('error', function (data) {
+        console.log("Error: " + data + ".");
+      });
+
+      socket.on(radio_token, function (data) {
+        console.log("Got new notification " + data.cmd + " for radio " + data.radio.name + ": " + JSON.stringify(data));
+      });
+      var playing = false;
+      $( document ).ready(function() {
+        $("#PlayButton").click(function(){
+          var player = document.getElementById("player");
+          icon = document.getElementById("playIcon");
+          if(playing){
+            player.pause();
+            icon.textContent = "play_arrow";
+            playing = false;
+          } else {
+            player.play();
+            icon.textContent = "pause";
+            playing = true;
+          }
+        });
+      });
+
+    </script>
+    <script src="/bundle.js"></script>
+    <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+    <script>
+      window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+      ga('create','UA-XXXXX-Y','auto');ga('send','pageview')
+    </script>
+    <script src="https://www.google-analytics.com/analytics.js" async defer></script>
+  </body>
+</html>
